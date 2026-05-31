@@ -9,6 +9,12 @@ ml-service/services/services/__pycache__/
 # Node
 node_modules/
 admin-panel/node_modules/
+admin-panel-ayi/node_modules/
+
+# Env files — never commit secrets
+.env
+admin-panel/.env
+admin-panel-ayi/.env
 
 # Build
 dist/
