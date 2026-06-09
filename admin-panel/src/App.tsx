@@ -8,7 +8,10 @@ import GrievanceDetail from './pages/GrievanceDetail'
 import Search from './pages/Search'
 import Reports from './pages/Reports'
 import AdminProfiles from './pages/AdminProfiles'
+import Feedback from './pages/Feedback'
+import MyGrievances from './pages/MyGrievances'
 import Layout from './components/Layout'
+import PublicStats from './pages/PublicStats'
 import { ThemeProvider } from './context/ThemeContext'
 
 function App() {
@@ -33,6 +36,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
+          <Route path="/public-stats" element={<PublicStats />} />
           <Route path="/" element={session ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<Dashboard />} />
             <Route path="grievances" element={<GrievanceList />} />
@@ -40,6 +44,8 @@ function App() {
             <Route path="search" element={<Search />} />
             <Route path="reports" element={<Reports />} />
             <Route path="admin-profiles" element={<AdminProfiles />} />
+            <Route path="feedback" element={<Feedback />} />
+            <Route path="my-grievances" element={<MyGrievances />} />
           </Route>
         </Routes>
       </BrowserRouter>

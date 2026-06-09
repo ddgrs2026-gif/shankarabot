@@ -21,6 +21,8 @@ const supabaseStorage = createClient(
     { auth: { persistSession: false } }
 );
 
+const rateLimit = require('express-rate-limit');
+
 app.use(bodyParser.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -28,6 +30,15 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     if (req.method === 'OPTIONS') return res.sendStatus(200);
     next();
+});
+
+// Rate limiter — 60 requests per minute per IP
+const webhookLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Too many requests'
 });
 
 // Health check
@@ -165,7 +176,7 @@ function buildSummary(session) {
 }
 
 // ─── Incoming messages ─────────────────────────────────────────────────────
-app.post('/webhook', async (req, res) => {
+app.post('/webhook', webhookLimiter, async (req, res) => {
     res.sendStatus(200);
 
     const body = req.body;

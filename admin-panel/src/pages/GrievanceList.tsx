@@ -1,26 +1,39 @@
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Grievance } from '../types'
 import { getStatusColor, formatDate } from '../lib/utils'
-import { useEffect, useState } from 'react'
 
 export default function GrievanceList() {
   const [searchParams] = useSearchParams()
+  const [grievances, setGrievances] = useState<Grievance[]>([])
   const [filteredGrievances, setFilteredGrievances] = useState<Grievance[]>([])
-  
-  const { data: grievances = [], isLoading } = useQuery({
-    queryKey: ['grievances'],
-    queryFn: async () => {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGrievances = async () => {
       const { data, error } = await supabase
         .from('grievances')
         .select('*')
         .order('created_at', { ascending: false })
-      
-      if (error) throw error
-      return data as Grievance[]
-    },
-  })
+      if (!error) setGrievances(data as Grievance[])
+      setIsLoading(false)
+    }
+    fetchGrievances()
+
+    // Real-time subscription
+    const channel = supabase
+      .channel('grievances-list')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'grievances' },
+        async () => {
+          const { data } = await supabase.from('grievances').select('*').order('created_at', { ascending: false })
+          if (data) setGrievances(data as Grievance[])
+        }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [])
 
   useEffect(() => {
     let filtered = [...grievances]

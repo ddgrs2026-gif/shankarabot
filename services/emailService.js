@@ -93,7 +93,7 @@ async function sendAssignmentEmail({ toEmail, toName, grievanceId, grievanceUUID
           <div class="info-value">${formattedDate}</div>
         </div>
       </div>
-      <a href="${DASHBOARD_URL}/grievances/${grievanceUUID}" class="btn">View Grievance →</a>
+      <a href="${DASHBOARD_URL}/my-grievances" class="btn">View My Grievances →</a>
     </div>
     <div class="footer">
       <p>Automated notification from DDGRS Grievance Management System. Do not reply.</p>
